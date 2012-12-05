@@ -20,9 +20,26 @@ $("#btnBusca").click(function(){
 //funcao para encaminhar a busca
 function getAddress() {		
 		var maxDist = "0.5";		
-		geocoder.geocode( {'address': $("#origem").val()}, function(rOrigem, sOrigem) {
+		var point = new google.maps.LatLng(51.50, -0.12);
+		 if (geocoder) {
+		      geocoder.geocode({ "latLng": point }, function (results, status) {
+		         if (status == google.maps.GeocoderStatus.OK) {
+		            if (results[1]) {
+		               console.log(results[1].formatted_address);
+		            } 
+		            else {
+		               console.log("No results found");
+		            }
+		         } 
+		         else {
+		            console.log("Geocoder failed due to: " + status);
+		         }
+		      });
+		   }
+		
+		geocoder.geocode( {"address": $("#origem").val()}, function(rOrigem, sOrigem) {
 			if(sOrigem == google.maps.GeocoderStatus.OK) {
-				geocoder.geocode( {'address': $("#destino").val()}, function(rDestino, sDestino) {					
+				geocoder.geocode( {"address": $("#destino").val()}, function(rDestino, sDestino) {					
 					if(sDestino == google.maps.GeocoderStatus.OK) {
 						var from = rOrigem[0].geometry.location;
 						var to = rDestino[0].geometry.location;													
@@ -50,6 +67,24 @@ function doSearch(from, to, maxDistance){
         //clearMarker("end")
     }
     json.maxDistance = maxDistance;   
+    var JSONstring = JSON.stringify(json);
+    console.log(json);
+    console.log(JSONstring);
+	$.ajax({
+            url: "/get",
+            type: "POST",
+            data: ({
+                json: JSONstring                
+            }),
+            dataType: "json",
+            success : function(data, textStatus) {
+                console.log("OK - RETORNO DO SERVLET");
+            },
+            error : function(xhr, textStatus, errorThrown) {
+            	console.log("ERRO");
+            }
+    });
+        
     //var JSONstring = $.toJSON(json);
     //console.log(JSONstring);
 

@@ -70,8 +70,80 @@ function doSearch(from, to, maxDistance){
     var JSONstring = JSON.stringify(json);
     console.log(json);
     console.log(JSONstring);
-	$.ajax({
-            url: "/get",
+  
+    var lat = deg2rad(json.src[0]);
+    var lon = deg2rad(json.src[1]);;
+    var minLat = cMin(json.src[0], 0.5);
+    var minLon = cMin(json.src[1], 0.5);
+    var maxLat = cMax(json.src[0], 0.5);
+    var maxLon = cMax(json.src[1], 0.5);
+    var origemSQL = "Select ID, Lat, LNG, " +
+    		" acos(sin("+lat+")*sin(radians(Lat)) +" +
+    		" cos("+lat+")*cos(radians(Lat))*cos(radians(Lng)-"+lon+"))*"+6371+" As D" +
+    		" From ( Select ID, LAT, LNG From pontos " +
+    		" Where Lat>"+minLat+" And Lat<"+maxLat+"" +
+    		" And Lng>"+minLon+" And Lng<"+maxLon+" ) As FirstCut " +
+    		" Where acos(sin("+lat+")*sin(radians(Lat)) +" +
+    		" cos("+lat+")*cos(radians(Lat))*cos(radians(Lng)-"+lon+"))*"+6371+" < "+json.maxDistance+
+    		" Order by D;";
+    lat = deg2rad(json.dst[0]);
+    lon = deg2rad(json.dst[1]);;
+    minLat = cMin(json.dst[0], 0.5);
+    minLon = cMin(json.dst[1], 0.5);
+    maxLat = cMax(json.dst[0], 0.5);
+    maxLon = cMax(json.dst[1], 0.5);
+    var destinoSQL = "Select ID, Lat, LNG, " +
+	" acos(sin("+lat+")*sin(radians(Lat)) +" +
+	" cos("+lat+")*cos(radians(Lat))*cos(radians(Lng)-"+lon+"))*"+6371+" As D" +
+	" From ( Select ID, LAT, LNG From pontos " +
+	" Where Lat>"+minLat+" And Lat<"+maxLat+"" +
+	" And Lng>"+minLon+" And Lng<"+maxLon+" ) As FirstCut " +
+	" Where acos(sin("+lat+")*sin(radians(Lat)) +" +
+	" cos("+lat+")*cos(radians(Lat))*cos(radians(Lng)-"+lon+"))*"+6371+" < "+json.maxDistance+
+	" Order by D;";
+    console.log("origemSQL -> "+origemSQL);
+    console.log("destinoSQL -> "+destinoSQL);
+	
+  //  =ACOS(SIN(lat1)*SIN(lat2)+COS(lat1)*COS(lat2)*COS(lon2-lon1))*6371
+    var minLat = cMin(json.src[0], 0.5);
+    var minLon = cMin(json.src[1], 0.5);
+    var maxLat = cMax(json.src[0], 0.5);
+    var maxLon = cMax(json.src[1], 0.5);
+    
+    
+    var x = "(LNG-("+json.src[1]+")) * cos(("+json.src[0]+"+LAT)/2)";
+    var y = "(LAT-("+json.src[0]+"))";
+    var d = "sqrt("+x+"*"+x+"+"+y+"*"+y+") * 6371";      
+    
+    var origem2SQL = "Select ID, Lat, LNG, " + d +
+    " As D" +
+	" From ( Select ID, LAT, LNG From pontos " +
+	" Where Lat>"+minLat+" And Lat<"+maxLat+"" +
+	" And Lng>"+minLon+" And Lng<"+maxLon+" ) As FirstCut " +
+	" Where " + d + " < "+json.maxDistance*1000+
+	" Order by D;";
+
+    var x1 = "(LNG-("+json.dst[1]+")) * cos(("+json.dst[0]+"+LAT)/2)";
+    var y1 = "(LAT-("+json.dst[0]+"))";
+    var d1 = "sqrt("+x1+"*"+x1+"+"+y1+"*"+y1+") * 6371";
+    
+    minLat = cMin(json.dst[0], 0.5);
+    minLon = cMin(json.dst[1], 0.5);
+    maxLat = cMax(json.dst[0], 0.5);
+    maxLon = cMax(json.dst[1], 0.5);
+    
+    var destino2SQL = "Select ID, Lat, LNG, " + d1 +
+    " As D" +
+	" From ( Select ID, LAT, LNG From pontos " +
+	" Where Lat>"+minLat+" And Lat<"+maxLat+"" +
+	" And Lng>"+minLon+" And Lng<"+maxLon+" ) As FirstCut " +
+	" Where " + d + " < "+json.maxDistance*1000+
+	" Order by D;";
+
+    console.log("origem2SQL -> "+origem2SQL);
+    console.log("destino2SQL -> "+destino2SQL);
+    $.ajax({
+            url: "get",
             type: "POST",
             data: ({
                 json: JSONstring                
@@ -85,6 +157,9 @@ function doSearch(from, to, maxDistance){
             }
     });
         
+
+	
+	
     //var JSONstring = $.toJSON(json);
     //console.log(JSONstring);
 
@@ -101,20 +176,6 @@ function doSearch(from, to, maxDistance){
 	//RETORNAR UMA LISTA FORMATADA INDICANDO AS POSSIVEIS PARADAS, AO CLICAR NA LISTA, DESENHA NO MAPA A ROTA/AS ROTAS
 	//E AS PARADAS NO CASO, AS DE ORIGEM, AS DE DESTINO E A DE CRUZAMENTO (SE HOUVER)
 
-    /*
-	$.ajax({
-            url: "/insert",
-            type: "POST",
-            data: ({
-                json: JSONstring
-            }),
-            dataType: "html",
-            success: function (response) {
-                instance.isInserting = false;
-                location.reload(true)
-            }
-    })*/
-  
 }
 
 
@@ -141,63 +202,26 @@ function deg2rad(degrees){
 //http://janmatuschek.de/LatitudeLongitudeBoundingCoordinates
 
 
-/*TENTAR DESCOBRIR PQ NAO ACHOU O PONTO DO T11
+//great circle
+function distance(lat1,lon1,lat2,lon2) {
+    var R = 6371; // km (change this constant to get miles)
+    var dLat = (lat2-lat1) * Math.PI / 180;
+    var dLon = (lon2-lon1) * Math.PI / 180;
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180 ) * Math.cos(lat2 * Math.PI / 180 ) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    var d = R * c;
+    if (d>1) return Math.round(d)+"km";
+    else if (d<=1) return Math.round(d*1000)+"m";
+    return d;
+}
 
-	ORIGEM-		-30.023248,-51.183954
-14927 -DEST-	-30,0225,-51,1842
-
-
-$lat = $_GET['lat'];  // latitude of centre of bounding circle in degrees
-$lon = $_GET['lon'];  // longitude of centre of bounding circle in degrees
-$rad = $_GET['rad'];  // radius of bounding circle in kilometers
-
-$R = 6371;  // earth's radius, km
-
-// first-cut bounding box (in degrees)
-$maxLat = $lat + rad2deg($rad/$R);
-$minLat = $lat - rad2deg($rad/$R);
-// compensate for degrees longitude getting smaller with increasing latitude
-$maxLon = $lon + rad2deg($rad/$R/cos(deg2rad($lat)));
-$minLon = $lon - rad2deg($rad/$R/cos(deg2rad($lat)));
-
-// convert origin of filter circle to radians
-$lat = deg2rad($lat);
-$lon = deg2rad($lon);
-
-Select ID, Postcode, Lat, Lon, 
-acos(sin($lat)*sin(radians(Lat)) + cos($lat)*cos(radians(Lat))*cos(radians(Lon)-$lon))*$R As D
-From (
-Select ID, Postcode, Lat, Lon
-From MyTable
-Where Lat>$minLat And Lat<$maxLat
-And Lon>$minLon And Lon<$maxLon
-) As FirstCut 
-Where acos(sin($lat)*sin(radians(Lat)) + cos($lat)*cos(radians(Lat))*cos(radians(Lon)-$lon))*$R < $rad
-Order by D";
-
-SQL SIDE - CASO TESTE Clemenciano Barnasque 160
-
-Select ID, LAT, LNG, 
-acos(sin(-0.5250353595962739)*sin(radians(Lat)) + cos(-0.5250353595962739)*cos(radians(Lat))*cos(radians(lng)--0.8938044029631709))*6371 As D
-From (
-Select ID, Lat, lng
-From Pontos
-Where Lat>-30.086806808029593 And Lat<-30.077813591970404
-And lng>-51.21571660802962 And lng<-51.206723391970435
-) As FirstCut 
-Where acos(sin(-0.5250353595962739)*sin(radians(Lat)) + cos(-0.5250353595962739)*cos(radians(Lat))*cos(radians(lng)--0.8938044029631709))*6371 < 0.5
-Order by D
-*/ 
-
-/**************
-CONSULTA PARA VER OQUE SE REPETE. ( LINHA DIRETA)
-SELECT C.* FROM (
-SELECT distinct A.ID_LINHAS from linhas_pontos A
-where A.id_Pontos in
-(15152,15153,3829,10757,5545,3830,972,3854,973,971,970,13287,13286,10758,15151,15150,10755,12492) ) C
-where id_linhas in (select distinct B.id_linhas from linhas_pontos B
-where B.id_pontos in
-(14928,14927,15162,14938,15161,7481,5434,15163,2851,2850,13168,7852,6584,10485,7851,15164))
-
-
-***/
+function distancePitagoras(lat1,lon1,lat2,lon2){
+	var dLat = (lat2-lat1);
+	var dLon = (lon2-lon1);
+	var c = Math.sqrt((dLat*dLat)+(dLon*dLon));
+	var R = 6371;
+	var d = (c*Math.PI*R)/180;
+	return d;
+}

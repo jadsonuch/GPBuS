@@ -6,7 +6,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 
 import br.com.gpbus.model.Linha;
 import br.com.gpbus.model.Ponto;
@@ -31,15 +30,15 @@ public class PontoService extends EJBImpl<Ponto, Integer> {
 		
 		//TypedQuery<Linha> query = entityManager.createQuery(				
 		Query query = entityManager.createQuery(				
-				"SELECT p.linhas " +
+				"SELECT distinct p.linhas " +
 				"FROM Ponto p "+
 				"WHERE (sqrt(((p.lat-(:latitude))*(p.lat-(:latitude)))+" +
-				"((p.lng-(:longitude))*(p.lng-(:longitude))))*PI()*6371)/180 > 0.5 ");
+				"((p.lng-(:longitude))*(p.lng-(:longitude))))*PI()*6371)/180 < 0.5 ");
 		
 		query.setParameter("latitude", latitude);
 		query.setParameter("longitude", longitude);		
 		//List<Linha> result = query.getResultList();
-		List result = query.getResultList();
+		List<Linha> result = query.getResultList();
 		
 		return result;
 	}

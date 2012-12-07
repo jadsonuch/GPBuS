@@ -3,23 +3,23 @@ package br.com.gpbus.util;
 import java.util.ArrayList;
 
 public class DataRequest{
-	private ArrayList<Double> src;
-	private ArrayList<Double> dst;
+	private ArrayList<Float> src;
+	private ArrayList<Float> dst;
 	private double maxDistance;
 	
 	public DataRequest() {			
 	}
 	
-	public ArrayList<Double> getSrc() {
+	public ArrayList<Float> getSrc() {
 		return src;
 	}
-	public void setSrc(ArrayList<Double> src) {
+	public void setSrc(ArrayList<Float> src) {
 		this.src = src;
 	}
-	public ArrayList<Double> getDst() {
+	public ArrayList<Float> getDst() {
 		return dst;
 	}
-	public void setDst(ArrayList<Double> dst) {
+	public void setDst(ArrayList<Float> dst) {
 		this.dst = dst;
 	}
 	public double getMaxDistance() {

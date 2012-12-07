@@ -68,5 +68,15 @@ public class Linha implements Serializable {
 	public void setPontos(List<Ponto> pontos) {
 		this.pontos = pontos;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format(
+				"%s[%s - %s - %s]",
+				getClass().getSimpleName(),
+				getId(),
+				getCodigo(),
+				getNome());
+	}
 
 }

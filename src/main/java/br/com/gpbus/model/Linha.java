@@ -78,5 +78,22 @@ public class Linha implements Serializable {
 				getCodigo(),
 				getNome());
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj == null || obj.getClass() != this.getClass()) {
+			return false;
+		}
+		
+		Linha o = (Linha) obj;
+		if (this.getId() == o.getId()){
+			return true;  
+		}else{
+			return false;
+		}
+	}
 
 }

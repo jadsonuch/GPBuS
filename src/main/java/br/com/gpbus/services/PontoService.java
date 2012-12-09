@@ -20,6 +20,8 @@ public class PontoService extends EJBImpl<Ponto, Integer> {
 		super(Ponto.class);
 	}
 
+	
+	@SuppressWarnings("unchecked")
 	public List<Linha> findLinhasNearPonto(Float latitude, Float longitude) {
 
 		/*select distinct(b.ID_LINHAS)
@@ -36,10 +38,47 @@ public class PontoService extends EJBImpl<Ponto, Integer> {
 				"((p.lng-(:longitude))*(p.lng-(:longitude))))*PI()*6371)/180 < 0.5 ");
 		
 		query.setParameter("latitude", latitude);
-		query.setParameter("longitude", longitude);		
-		//List<Linha> result = query.getResultList();
+		query.setParameter("longitude", longitude);	
 		List<Linha> result = query.getResultList();
 		
+		return result;
+	}
+
+
+	public List<Object[]> findParadasQueSeCruzam(List<Integer> origem,
+			List<Integer> destino) {
+		
+		/*SELECT AA1.ID_LINHAS, BB1.ID_LINHAS
+		FROM (
+			SELECT AB1. *
+			FROM linhas_pontos AB1
+			WHERE AB1.ID_LINHAS IN ( 1, 2 )
+		)AA1, (
+			SELECT AB2. *
+			FROM linhas_pontos AB2
+			WHERE AB2.ID_LINHAS IN ( 3, 5, 6, 7 )
+		)BB1
+		WHERE AA1.ID_PONTOS = BB1.ID_PONTOS*/
+		Query q = entityManager.createNativeQuery(			
+				"SELECT AA1.ID_LINHAS, BB1.ID_LINHAS " +
+				" FROM ( SELECT AB1.*" +
+				" 		 FROM linhas_pontos AB1 " +
+				"		 WHERE AB1.ID_LINHAS IN (:origem) " +
+				")AA1, (" +
+				" 		SELECT AB2.* FROM linhas_pontos AB2 " +
+				" 		WHERE AB2.ID_LINHAS IN ( :destino ) " +
+				")BB1" +
+				" WHERE AA1.ID_PONTOS = BB1.ID_PONTOS " +
+				" GROUP BY AA1.ID_LINHAS, BB1.ID_LINHAS");
+		
+		System.out.println("origem"+origem);
+		System.out.println("destino"+destino);
+		q.setParameter("origem", origem);
+		q.setParameter("destino", destino);	
+		List<Object[]> result = q.getResultList();
+		for (Object[] l : result){
+			System.out.println("\t" + l[0] + "\t" + l[1]);
+		}
 		return result;
 	}
 }

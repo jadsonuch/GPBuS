@@ -45,7 +45,7 @@ function getAddress() {
 						var to = rDestino[0].geometry.location;													
 						doSearch(from, to, maxDist);
 					}
-					else {
+					else {						
 						alert("Endereço não encontrado.");
 						//var from = rOrigem[0].geometry.location;
 						//page.search(from, null, maxDist);
@@ -173,9 +173,11 @@ function doSearch(from, to, maxDistance){
             			$("#resposta").append("<table id='linhasEncontradas' class='table table-hover table-condensed' style='display: none;'><thead><tr><th>#</th><th>Linha</th></tr></thead><tbody></tbody></table>");            			            			
             			$("#linhasEncontradas").show();     			
             			createDynamicTable($('#linhasEncontradas'),linhasEmComum);
-            		}           		
-            	} 
-                console.log("OK - RETORNO DO SERVLET");                
+            		}else{
+            			alert("0 rotas encontradas. Deseja procurar por baldiação?");
+            		}     		
+            	}                 
+            	console.log("OK - RETORNO DO SERVLET");                
             },
             error : function(xhr, textStatus, errorThrown) {
             	console.log("ERRO");

@@ -1,4 +1,4 @@
-//LÃ³gica da bussca
+//Lógica da bussca
 var map;
 var geocoder;
 
@@ -54,8 +54,23 @@ function getAddress() {
 			}
 		});		
 }
+var linhasEmComum;
+var searchInProgress = null;
+var isSearching = false;
 
 function doSearch(from, to, maxDistance){
+	
+	//Vai verificar se existe uma busca sendo feita. Caso exista, vai para-la.
+	if (isSearching) {
+		if (searchInProgress) {
+			searchInProgress.abort();
+			searchInProgress = null;
+			isSearching = false;
+		}
+	} 
+	isSearching = true;
+	
+	
 	console.log("from->"+from);
 	console.log("to->"+to);
    	var json = new Object;
@@ -142,20 +157,47 @@ function doSearch(from, to, maxDistance){
 
     console.log("origem2SQL -> "+origem2SQL);
     console.log("destino2SQL -> "+destino2SQL);
-    $.ajax({
+    searchInProgress = $.ajax({
             url: "get",
             type: "POST",
             data: ({
                 json: JSONstring                
             }),
             dataType: "json",
-            success : function(data, textStatus) {
+            success : function(data, textStatus) {            	
+            	if (isSearching) {
+            		isSearching = false;
+            		linhasEmComum = data.linhas;
+            		if(linhasEmComum.length > 0){    
+            			$("#resposta").html("<a onclick='closeResultsBlock();' href='javascript:void(0);'><div class='close icon-remove'></div></a>");
+            			$("#resposta").append("<table id='linhasEncontradas' class='table table-hover table-condensed' style='display: none;'><tbody></tbody></table>");        				            		
+            			$("#linhasEncontradas").show();     			
+            			createDynamicTable($('#linhasEncontradas'),linhasEmComum);
+            		}
+            		/*<table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>First N	ame</th>
+                        <th>Last Name</th>
+                        <th>Username</th>
+                      </tr>
+                    </thead>
+                   
+                  </table>*/
+
+            		
+            	} 
                 console.log("OK - RETORNO DO SERVLET");
+                
             },
             error : function(xhr, textStatus, errorThrown) {
             	console.log("ERRO");
             }
     });
+    $("#resposta").show();
+    $("#resposta").html("<img src='img/loading.gif' style='vertical-align: middle;'/> Buscando...");
+    
         
 
 	
@@ -178,6 +220,23 @@ function doSearch(from, to, maxDistance){
 
 }
 
+function createDynamicTable(tbody, linhas) {
+	if (tbody == null || tbody.length < 1) return;
+	for (var r = 0; r < linhas.length; r++) {
+		var trow = $("<tr>");
+		 $("<td>")
+		 .text(linhas[r].codigo)
+		  .appendTo(trow);		
+		 $("<td>")
+		 .text(linhas[r].nome)
+		  .appendTo(trow);		
+		 trow.appendTo(tbody);
+	}	
+}
+
+function closeResultsBlock() {
+	$("#resposta").fadeOut(300);	
+}; 
 
 
 //AUX FUNCTIONS and CONSTANTS

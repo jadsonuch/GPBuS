@@ -1,5 +1,6 @@
 package br.com.gpbus.servlet;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import br.com.gpbus.model.Linha;
 import br.com.gpbus.services.PontoService;
 import br.com.gpbus.util.DataRequest;
+import br.com.gpbus.util.JsonBuilder;
+
 
 import com.google.gson.Gson;
 
@@ -25,7 +28,7 @@ public class RequestController extends HttpServlet{
 	
 	@Override
 	protected void doPost(HttpServletRequest request,
-			HttpServletResponse response){
+			HttpServletResponse response) throws IOException{
 
 		String json = request.getParameter("json");
 		Gson gson = new Gson();
@@ -60,8 +63,13 @@ public class RequestController extends HttpServlet{
 		//return ids LinhaOrigem
 		//return ids LinhasDestino
 		//return ids LinhasIguais
-		List<Object[]> linhasComPontosEmComum = pontoService.findParadasQueSeCruzam(origem,destino);
-
+		List<Object[]> linhasComPontosEmComum = pontoService.findParadasQueSeCruzam(origem,destino);		
+		
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(String.format(
+				"{\"linhas\":%s}",
+				JsonBuilder.toJson(linhasIguais)));		
 		
 	}
 	

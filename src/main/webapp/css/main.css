@@ -11,3 +11,45 @@
 .container{
 	width: auto !important;
 }
+
+.close:hover{
+  background-image: url("../img/glyphicons-halflings-white.png");
+  opacity: 1;
+  filter: alpha(opacity=100); 
+}
+a div.close{
+	right: 0;
+}
+
+/*!
+ * mais opcoes glyphicons
+ *
+ */
+
+.icon-aqua {
+    background-image: url("../img/glyphicons-halflings-aqua.png");
+}
+.icon-blue {
+    background-image: url("../img/glyphicons-halflings-blue.png");
+}
+.icon-green {
+    background-image: url("../img/glyphicons-halflings-green.png");
+}
+.icon-orange {
+    background-image: url("../img/glyphicons-halflings-orange.png");
+}
+.icon-red {
+    background-image: url("../img/glyphicons-halflings-red.png");
+}
+
+#resposta {
+    left: 100px;
+    margin: 0;
+    position: absolute;
+    top: 80px;
+    width: 260px;
+    bgackground-color: gray;
+    opacity: 0.7;
+    margin: 0 2.5% 2.5%;
+    padding: 10px;
+}

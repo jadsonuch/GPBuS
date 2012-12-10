@@ -169,55 +169,23 @@ function doSearch(from, to, maxDistance){
             		isSearching = false;
             		linhasEmComum = data.linhas;
             		if(linhasEmComum.length > 0){    
-            			$("#resposta").html("<a onclick='closeResultsBlock();' href='javascript:void(0);'><div class='close icon-remove'></div></a>");
-            			$("#resposta").append("<table id='linhasEncontradas' class='table table-hover table-condensed' style='display: none;'><tbody></tbody></table>");        				            		
+            			$("#resposta").html("<a onclick='closeResultsBlock();' href='javascript:void(0);'><div id='close' class='close icon-remove'></div></a>");
+            			$("#resposta").append("<table id='linhasEncontradas' class='table table-hover table-condensed' style='display: none;'><thead><tr><th>#</th><th>Linha</th></tr></thead><tbody></tbody></table>");            			            			
             			$("#linhasEncontradas").show();     			
             			createDynamicTable($('#linhasEncontradas'),linhasEmComum);
-            		}
-            		/*<table class="table table-bordered">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>First N	ame</th>
-                        <th>Last Name</th>
-                        <th>Username</th>
-                      </tr>
-                    </thead>
-                   
-                  </table>*/
-
-            		
+            		}           		
             	} 
-                console.log("OK - RETORNO DO SERVLET");
-                
+                console.log("OK - RETORNO DO SERVLET");                
             },
             error : function(xhr, textStatus, errorThrown) {
             	console.log("ERRO");
             }
     });
     $("#resposta").show();
-    $("#resposta").html("<img src='img/loading.gif' style='vertical-align: middle;'/> Buscando...");
-    
-        
-
-	
+    $("#resposta").html("<img src='img/loading.gif' style='vertical-align: middle;'/> Buscando..."); 
 	
     //var JSONstring = $.toJSON(json);
     //console.log(JSONstring);
-
-    //TRABALHAR EM CIMA DO BANCO
-
-    //CONSTRUIR AJAX QUE RETORNA AS PARADAS POSSIVEIS  
-    //PEGANDO A ORIGEM E O DESTINO DADO E A DISTANCIA  <-- 50% SQL DONE
-    //E ANALISANDO AS PARADAS PROXIMAS SE ESTAO DENTRO DO RAIO DA DISTANCIA DADA.
-    //http://www.movable-type.co.uk/scripts/latlong-db.html -- Selecting points within a bounding circle
-    //SE ESTIVER EM AMBOS = PARADA ESCOLHIDA ( PARADA DIRETA) <-- 50% SQL DONE. OTIMIZAR
-    //SE NAO TIVER, OPCAO PARA CONTINUAR BUSCA ( COMPARAR PARADAS EM COMUM )
-    //SENAO TIVER, OPCAO PARA CONTINUAR BUSCA E COMPARAR DISTANCIA ENTRE AS PARADAS (PEGAR TODAS
-    //AS PARADAS QUE ESTIVER DENTRO DA DISTANCIA ESTABELECIDA DE CADA CAPARADA E FAZER CRUZAMENTO)
-	//RETORNAR UMA LISTA FORMATADA INDICANDO AS POSSIVEIS PARADAS, AO CLICAR NA LISTA, DESENHA NO MAPA A ROTA/AS ROTAS
-	//E AS PARADAS NO CASO, AS DE ORIGEM, AS DE DESTINO E A DE CRUZAMENTO (SE HOUVER)
-
 }
 
 function createDynamicTable(tbody, linhas) {

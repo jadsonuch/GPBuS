@@ -12,13 +12,15 @@
 	width: auto !important;
 }
 
+#close{
+	right: 0px !important;
+	top: 0px !important;
+}
+
 .close:hover{
   background-image: url("../img/glyphicons-halflings-white.png");
   opacity: 1;
   filter: alpha(opacity=100); 
-}
-a div.close{
-	right: 0;
 }
 
 /*!

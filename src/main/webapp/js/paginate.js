@@ -1,8 +1,18 @@
+/*
+ * 	superEasy Paginate 0.1 - jQuery plugin
+ *	written by Jadson	
+ *
+ *	Copyright (c) 2012 Jadson 
+ *  
+ *	Built for jQuery library to work with BootStrap pagination
+ *	http://jquery.com
+ *
+ */
 (function($) {
 	
 	$.fn.paginate = function(options){
 		var defaults = {
-				step: 10			
+			step: 10			
 		};
 		
 		var options = $.extend(defaults, options); 
@@ -15,25 +25,20 @@
 		var pages = Math.floor(count/step);
 		var page = 1;
 		var oldPage = 1;
-		var timeout;
 		var clicked = false;
 		
 		function init(){
 			$(children).each(function(i){
 				var child = $(this);
-				child.hide();								
-				//if(i>=lower && i<upper){setTimeout(function(){child.fadeIn('fast')},(i-( Math.floor(i/step) * step) )*options.delay );}				
+				child.hide();											
 			});
 		};
-
 		
 		function show(){			
-			//clearTimeout(timeout);
-			//var childs = $(this).children();
 			console.log("page novo valor: "+page+" oldPage: " + oldPage);
 			lower = ((oldPage-1) * step);
 			upper = lower+step;
-			console.log("limpando de "+lower+" ate " + upper);
+			//console.log("limpando de "+lower+" ate " + upper);
 			for(var i=lower;i<=upper;i++){
 				var pos = $(children.get(i));
 				pos.hide();
@@ -41,7 +46,7 @@
 			
 			lower = ((page-1) * step);
 			upper = lower+step;
-			console.log("criando de "+lower+" ate " + upper);
+			//console.log("criando de "+lower+" ate " + upper);
 			for(var i=lower;i<=upper;i++){
 				var pos = $(children.get(i));
 				pos.fadeIn('fast');
@@ -49,8 +54,37 @@
 			
 			$('li[data-index="'+oldPage+'"]').removeClass('disabled');						
 			$('li[data-index="'+page+'"]').addClass('disabled');
+			
+			console.log("clicked"+clicked);
+			console.log("pages"+pages);
+			if(clicked && pages>5){
+				rebuildPaginator(page);
+			}
 			oldPage = page;
 		};
+		
+		function rebuildPaginator(x){
+			var elements = $('#anterior').nextUntil('#proximo');
+			var auxPageMin = 0;
+			var auxPageMax = 0;
+			if( (x - 2) < 1){
+				auxPageMin = 1;
+				auxPageMax = 5;
+			}else if( (parseInt(x) + 2) > pages){
+				auxPageMax = pages;
+				auxPageMin = pages - 5;
+			}else{
+				auxPageMin = parseInt(x) - 2;
+				auxPageMax = parseInt(x) + 2;
+			}			
+			//console.log("auxPageMin/auxPageMax -> "+ auxPageMin + "/" + auxPageMax);
+			elements.hide();
+			for(var i=auxPageMin;i<=auxPageMax;i++){
+				$('li[data-index="'+i+'"]').fadeIn('fast');							
+			}		
+			
+		}
+		
 		
 		this.each(function(){ 
 			
@@ -59,8 +93,7 @@
 			obj = this;
 			if(count>step){							
 				if((count/step) > pages) pages++;
-				var divPagination = $("<div class='pagination pagination-mini'></div>").insertAfter(obj);
-				
+				var divPagination = $("<div class='pagination pagination-mini'></div>").insertAfter(obj);				
 				var ol = $('<ul id="'+ options.controls +'"></ol>');
 				ol.appendTo($("div.pagination"));
 				
@@ -90,7 +123,7 @@
 							clicked = true;
 							page = $(this).attr('data-index');
 							show();
-						});								
+						});										
 				}						
 				$('<li id="proximo"><a>c</a></li>')
 						.appendTo(ol)
@@ -110,11 +143,14 @@
 								show();
 							}
 						});
-			
+				
+				if(pages>5){
+					var elements = $('#anterior').nextUntil('#proximo');
+					elements.hide();					
+					rebuildPaginator(1);									
+				}
 				show();
 			}
 		});
-
-	};
-	
+	};	
 })(jQuery);

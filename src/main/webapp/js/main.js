@@ -169,10 +169,32 @@ function doSearch(from, to, maxDistance){
             		isSearching = false;
             		linhasEmComum = data.linhas;
             		if(linhasEmComum.length > 0){    
-            			$("#resposta").html("<a onclick='closeResultsBlock();' href='javascript:void(0);'><div id='close' class='close icon-remove'></div></a>");
-            			$("#resposta").append("<table id='linhasEncontradas' class='table table-hover table-condensed' style='display: none;'><thead><tr><th>#</th><th>Linha</th></tr></thead><tbody></tbody></table>");            			            			
-            			$("#linhasEncontradas").show();     			
-            			createDynamicTable($('#linhasEncontradas'),linhasEmComum);
+            		    
+            			$("#resposta").html("<div class='header'>Linhas<button type='button' class='close' onclick='closeResultsBlock();'>&times;</button></div>");            			            			
+            			$("#resposta").append("<ul id='items'>");            			            			
+            			
+            			for(var i = 0 ; i< linhasEmComum.length; i++){
+            				var li = $("<li>");
+            				 li.html("<a href='#'>"+linhasEmComum[i].codigo + " " + linhasEmComum[i].nome + "</a>");            				 
+            				 li.appendTo($("ul#items"));		
+            			}
+            				            			            			            
+                		$("#resposta").append("</br>");            			            		
+            			
+            			//$("#resposta").append("<table id='linhasEncontradas' class='table table-hover table-condensed' style='display: none;'><thead><tr><th>#</th><th>Linha</th></tr></thead><tbody></tbody></table>");
+                		           
+                		/*$('ul#items').easyPaginate({							
+                				elementsPerPage: '5',
+                				effect: 'climb'
+                			});*/
+
+
+                		$('ul#items').paginate({
+                				step:10                
+               			});
+
+                		$("#linhasEncontradas").show();     			
+            			//createDynamicTable($('#linhasEncontradas'),linhasEmComum);
             		}else{
             			alert("0 rotas encontradas. Deseja procurar por baldiação?");
             		}     		

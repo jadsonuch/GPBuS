@@ -12,13 +12,12 @@
 	width: auto !important;
 }
 
-#close{
-	right: 0px !important;
-	top: 0px !important;
+.close{
+	left: 0px;
+	right: 0px;
 }
 
 .close:hover{
-  background-image: url("../img/glyphicons-halflings-white.png");
   opacity: 1;
   filter: alpha(opacity=100); 
 }
@@ -44,14 +43,16 @@
     background-image: url("../img/glyphicons-halflings-red.png");
 }
 
+
+
 #resposta {
     left: 100px;
     margin: 0;
     position: absolute;
     top: 80px;
     width: 260px;
-    bgackground-color: gray;
     opacity: 0.7;
     margin: 0 2.5% 2.5%;
     padding: 10px;
+    max-height: 400px;
 }

@@ -34,6 +34,7 @@ function getAddress() {
 	 }
 }
 var linhasEmComum;
+var linhasTeste;
 var searchInProgress = null;
 var isSearching = false;
 
@@ -68,13 +69,32 @@ function doSearch(from, to, maxDistance){
             	if (isSearching) {
             		isSearching = false;
             		linhasEmComum = data.linhas;
+            		linhasTeste = data;
+            		console.log("linhasEmComum.length"+linhasEmComum.length);
             		if(linhasEmComum.length > 0){                		    
+            			console.log("entrou no > 0");
             			buildResultsBlock($("#resposta"), linhasEmComum); 			
             		}else{
-            			alert("0 rotas encontradas. Deseja procurar por baldiação?");
+            			console.log("entrou no < 0");
+            			$("#resposta").addClass("alert-block").removeClass("alert-info");
+            			$("#resposta").html("<p>Nenhuma conex&atilde;o direta encontrada. " +
+            								"Deseja tentar procurar por uma baldia&ccedil;&atilde;o?</p>" +
+            								"</br>");
+            			$("#resposta").append('<div id="btnToolbar" style="margin: 0;" class="btn-toolbar"></div>');
+            					
+            			$("<button id='btnBaldiacao' class='btn btn-primary'>Sim</button>")
+            				.appendTo($("#btnToolbar"))
+            				.click(function(){
+            					doSearchDual(data.linhasOrigem,data.linhasDestino,maxDistance);
+            					console.log("Clicou Para continuar a busca");
+            				});
+            			$("<button id='btnCancelBaldiacao' class='btn btn-danger'>N&atilde;o</button>")
+            			    .appendTo($("#btnToolbar"))
+            				.click(function(){
+            					closeResultsBlock();
+            				});
             		}     		
-            	}                 
-            	console.log("OK - RETORNO DO SERVLET");                
+            	}                                 
             },
             error : function(xhr, textStatus, errorThrown) {
             	console.log("ERRO");
@@ -84,18 +104,73 @@ function doSearch(from, to, maxDistance){
     $("#resposta").html("<img src='img/loading.gif' style='vertical-align: middle;'/> Buscando..."); 	
 }
 
+var testDual;
+function doSearchDual(origem,destino,maxDistance){
+	
+	//Vai verificar se existe uma busca sendo feita. Caso exista, vai para-la.
+	if (isSearching) {
+		if (searchInProgress) {
+			searchInProgress.abort();
+			searchInProgress = null;
+			isSearching = false;
+		}
+	} 
+	isSearching = true;		
+   	var json = new Object;
+   	var src = [];
+   	var dst = [];
+    for(var i=0;i<origem.length;i++){
+    	src.push(origem[i].id);
+    }
+   	json.src = src;
+    if (destino) {
+        for(var i=0;i<destino.length;i++){
+        	dst.push(destino[i].id);
+        }
+        json.dst = dst;
+    } 
+    json.maxDistance = maxDistance;   
+    var JSONstring = JSON.stringify(json);
+	console.log(JSONstring);
+    searchInProgress = $.ajax({
+        url: "dual",
+        type: "POST",
+        data: ({
+            json: JSONstring                
+        }),
+        dataType: "json",
+        success : function(data, textStatus) {            	
+        	if (isSearching) {
+        		isSearching = false;
+        		testDual = data;
+        		linhasTeste = data;
+        		console.log("DUAL OK"); 		
+        	}                                 
+        },
+        error : function(xhr, textStatus, errorThrown) {
+        	console.log("ERRO - DUAL");
+        }
+	});
+    $("#resposta").addClass("alert-info").removeClass("alert-block");
+	$("#resposta").html("<img src='img/loading.gif' style='vertical-align: middle;'/> Buscando por baldiação..."); 	
+    
+}
+
+
 function buildResultsBlock(element,content){
 	element.html("<div class='header'>Linhas<button type='button' class='close' onclick='closeResultsBlock();'>&times;</button></div>");            			            			
 	element.append("<ul id='items'>");            			            			            			
-	for(var i = 0 ; i< linhasEmComum.length; i++){
+	for(var i = 0 ; i< content.length; i++){
 		var li = $("<li>");
-		 li.html("<a href='#'>"+linhasEmComum[i].codigo + " " + linhasEmComum[i].nome + "</a>");            				 
+		 li.html("<a href='#'>"+content[i].codigo + " " + content[i].nome + "</a>");            				 
 		 li.appendTo($("ul#items"));		
 	}            				            			            			            
 	element.append("</br>");            			            		            			
-	$('ul#items').paginate({
+	if(content.length > 10){
+		$('ul#items').paginate({
 			step:10                
-	});    
+		});    		
+	}
 }
 
 function closeResultsBlock() {

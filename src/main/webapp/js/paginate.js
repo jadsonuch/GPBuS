@@ -81,20 +81,16 @@
 			elements.hide();
 			for(var i=auxPageMin;i<=auxPageMax;i++){
 				$('li[data-index="'+i+'"]').fadeIn('fast');							
-			}		
-			
-		}
+			}					
+		}		
 		
-		
-		this.each(function(){ 
-			
-			init();
-			
+		this.each(function(){ 			
+			init();			
 			obj = this;
 			if(count>step){							
 				if((count/step) > pages) pages++;
-				var divPagination = $("<div id='paginador' class='pagination pagination-small pagination-centered'></div>").insertAfter(obj);				
-				var ol = $('<ul id="'+ options.controls +'"></ol>');
+				$("<div id='paginador' class='pagination pagination-small pagination-centered'></div>").insertAfter(obj);				
+				var ol = $('<ul id="'+ options.controls +'"></ul>');
 				ol.appendTo($("div.pagination"));
 				
 				$('<li id="primeiro"><a><div class="icon-step-backward"/></a></li>').appendTo(ol).

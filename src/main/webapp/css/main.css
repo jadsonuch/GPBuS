@@ -68,3 +68,11 @@
     padding-left: 0px; 
     max-height: 400px;
 }
+
+#btnBaldiação, #btnCancelBaldiacao {
+	opacity: 1;
+}
+#btnToolbar {
+	position: absolute;
+	bottom: 0px;
+}

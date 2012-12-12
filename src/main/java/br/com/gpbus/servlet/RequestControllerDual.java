@@ -10,45 +10,40 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.com.gpbus.model.Linha;
+import com.google.gson.Gson;
+
 import br.com.gpbus.services.PontoService;
 import br.com.gpbus.util.DataRequest;
 import br.com.gpbus.util.JsonBuilder;
 
+@WebServlet("/dual")
+public class RequestControllerDual extends HttpServlet {
 
-import com.google.gson.Gson;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7253095734412020216L;
 
-@WebServlet("/get")
-public class RequestController extends HttpServlet{
-	
-	private static final long serialVersionUID = -7754818904923815254L;
-	
 	@EJB
 	private PontoService pontoService;	
 	
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws IOException{
-
+		
+		
 		String json = request.getParameter("json");
 		Gson gson = new Gson();
 		DataRequest data = gson.fromJson(json, DataRequest.class);
 		System.out.println(data.toString());
-		//{"src":[-30.0823102,-51.211220000000026],"dst":[-30.0232484,-51.183954400000005],"maxDistance":"0.5"}
 
-		List<Linha> linhasOrigem = pontoService.findLinhasNearPonto(data.getSrc().get(0), data.getSrc().get(1));
-		List<Linha> linhasDestino = pontoService.findLinhasNearPonto(data.getDst().get(0), data.getDst().get(1));
-		List<Linha> linhasIguais = new ArrayList<Linha>(linhasOrigem);
-		
-		linhasIguais.retainAll(linhasDestino);
+		List<Object[]> linhasComPontosEmComum = pontoService.findParadasQueSeCruzam(data.getSrc(),data.getDst());				
 		
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(String.format(
-				"{\"linhas\":%s,\"linhasOrigem\":%s,\"linhasDestino\":%s}",
-				JsonBuilder.toJson(linhasIguais),
-				JsonBuilder.toJson(linhasOrigem),
-				JsonBuilder.toJson(linhasDestino)));		
+				"{\"linhas\":%s}",
+				JsonBuilder.toJson(linhasComPontosEmComum)));	
 	}
 	
 	

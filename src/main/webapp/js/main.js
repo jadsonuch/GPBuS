@@ -2,12 +2,6 @@
 var map;
 var geocoder;
 
-var json = [{
-	"lat":-30.1653,	"lng":-51.1542},
-{	"lat":-30.1644,	"lng":-51.1523},
-{	"lat":-30.1632,	"lng":-51.1507},
-{	"lat":-30.1628,	"lng":-51.1565}];
-
 $("#btnBusca").click(function(){            
 	console.log("clicou");
 	var overflow = $(".nav-collapse.collapse").css('overflow');
@@ -19,24 +13,8 @@ $("#btnBusca").click(function(){
 
 //funcao para encaminhar a busca
 function getAddress() {		
-		var maxDist = "0.5";		
-		var point = new google.maps.LatLng(51.50, -0.12);
-		 if (geocoder) {
-		      geocoder.geocode({ "latLng": point }, function (results, status) {
-		         if (status == google.maps.GeocoderStatus.OK) {
-		            if (results[1]) {
-		               console.log(results[1].formatted_address);
-		            } 
-		            else {
-		               console.log("No results found");
-		            }
-		         } 
-		         else {
-		            console.log("Geocoder failed due to: " + status);
-		         }
-		      });
-		   }
-		
+	var maxDist = "0.5";		
+	if (geocoder) {	
 		geocoder.geocode( {"address": $("#origem").val()}, function(rOrigem, sOrigem) {
 			if(sOrigem == google.maps.GeocoderStatus.OK) {
 				geocoder.geocode( {"address": $("#destino").val()}, function(rDestino, sDestino) {					
@@ -52,14 +30,14 @@ function getAddress() {
 					}
 				});
 			}
-		});		
+		});
+	 }
 }
 var linhasEmComum;
 var searchInProgress = null;
 var isSearching = false;
 
-function doSearch(from, to, maxDistance){
-	
+function doSearch(from, to, maxDistance){	
 	//Vai verificar se existe uma busca sendo feita. Caso exista, vai para-la.
 	if (isSearching) {
 		if (searchInProgress) {
@@ -68,95 +46,17 @@ function doSearch(from, to, maxDistance){
 			isSearching = false;
 		}
 	} 
-	isSearching = true;
-	
-	
-	console.log("from->"+from);
-	console.log("to->"+to);
+	isSearching = true;		
    	var json = new Object;
     json.src = [from.lat(), from.lng()];
     if (to) {
         json.dst = [to.lat(), to.lng()];
     } else {
         json.dst = null;
-        //clearMarker("end")
     }
     json.maxDistance = maxDistance;   
     var JSONstring = JSON.stringify(json);
-    console.log(json);
-    console.log(JSONstring);
-  
-    var lat = deg2rad(json.src[0]);
-    var lon = deg2rad(json.src[1]);;
-    var minLat = cMin(json.src[0], 0.5);
-    var minLon = cMin(json.src[1], 0.5);
-    var maxLat = cMax(json.src[0], 0.5);
-    var maxLon = cMax(json.src[1], 0.5);
-    var origemSQL = "Select ID, Lat, LNG, " +
-    		" acos(sin("+lat+")*sin(radians(Lat)) +" +
-    		" cos("+lat+")*cos(radians(Lat))*cos(radians(Lng)-"+lon+"))*"+6371+" As D" +
-    		" From ( Select ID, LAT, LNG From pontos " +
-    		" Where Lat>"+minLat+" And Lat<"+maxLat+"" +
-    		" And Lng>"+minLon+" And Lng<"+maxLon+" ) As FirstCut " +
-    		" Where acos(sin("+lat+")*sin(radians(Lat)) +" +
-    		" cos("+lat+")*cos(radians(Lat))*cos(radians(Lng)-"+lon+"))*"+6371+" < "+json.maxDistance+
-    		" Order by D;";
-    lat = deg2rad(json.dst[0]);
-    lon = deg2rad(json.dst[1]);;
-    minLat = cMin(json.dst[0], 0.5);
-    minLon = cMin(json.dst[1], 0.5);
-    maxLat = cMax(json.dst[0], 0.5);
-    maxLon = cMax(json.dst[1], 0.5);
-    var destinoSQL = "Select ID, Lat, LNG, " +
-	" acos(sin("+lat+")*sin(radians(Lat)) +" +
-	" cos("+lat+")*cos(radians(Lat))*cos(radians(Lng)-"+lon+"))*"+6371+" As D" +
-	" From ( Select ID, LAT, LNG From pontos " +
-	" Where Lat>"+minLat+" And Lat<"+maxLat+"" +
-	" And Lng>"+minLon+" And Lng<"+maxLon+" ) As FirstCut " +
-	" Where acos(sin("+lat+")*sin(radians(Lat)) +" +
-	" cos("+lat+")*cos(radians(Lat))*cos(radians(Lng)-"+lon+"))*"+6371+" < "+json.maxDistance+
-	" Order by D;";
-    console.log("origemSQL -> "+origemSQL);
-    console.log("destinoSQL -> "+destinoSQL);
-	
-  //  =ACOS(SIN(lat1)*SIN(lat2)+COS(lat1)*COS(lat2)*COS(lon2-lon1))*6371
-    var minLat = cMin(json.src[0], 0.5);
-    var minLon = cMin(json.src[1], 0.5);
-    var maxLat = cMax(json.src[0], 0.5);
-    var maxLon = cMax(json.src[1], 0.5);
     
-    
-    var x = "(LNG-("+json.src[1]+")) * cos(("+json.src[0]+"+LAT)/2)";
-    var y = "(LAT-("+json.src[0]+"))";
-    var d = "sqrt("+x+"*"+x+"+"+y+"*"+y+") * 6371";      
-    
-    var origem2SQL = "Select ID, Lat, LNG, " + d +
-    " As D" +
-	" From ( Select ID, LAT, LNG From pontos " +
-	" Where Lat>"+minLat+" And Lat<"+maxLat+"" +
-	" And Lng>"+minLon+" And Lng<"+maxLon+" ) As FirstCut " +
-	" Where " + d + " < "+json.maxDistance*1000+
-	" Order by D;";
-
-    var x1 = "(LNG-("+json.dst[1]+")) * cos(("+json.dst[0]+"+LAT)/2)";
-    var y1 = "(LAT-("+json.dst[0]+"))";
-    var d1 = "sqrt("+x1+"*"+x1+"+"+y1+"*"+y1+") * 6371";
-    
-    minLat = cMin(json.dst[0], 0.5);
-    minLon = cMin(json.dst[1], 0.5);
-    maxLat = cMax(json.dst[0], 0.5);
-    maxLon = cMax(json.dst[1], 0.5);
-    
-    var destino2SQL = "Select ID, Lat, LNG, " + d1 +
-    " As D" +
-	" From ( Select ID, LAT, LNG From pontos " +
-	" Where Lat>"+minLat+" And Lat<"+maxLat+"" +
-	" And Lng>"+minLon+" And Lng<"+maxLon+" ) As FirstCut " +
-	" Where " + d + " < "+json.maxDistance*1000+
-	" Order by D;";
-
-    console.log("origem2SQL -> "+origem2SQL);
-    console.log("destino2SQL -> "+destino2SQL);
     searchInProgress = $.ajax({
             url: "get",
             type: "POST",
@@ -168,33 +68,8 @@ function doSearch(from, to, maxDistance){
             	if (isSearching) {
             		isSearching = false;
             		linhasEmComum = data.linhas;
-            		if(linhasEmComum.length > 0){    
-            		    
-            			$("#resposta").html("<div class='header'>Linhas<button type='button' class='close' onclick='closeResultsBlock();'>&times;</button></div>");            			            			
-            			$("#resposta").append("<ul id='items'>");            			            			
-            			
-            			for(var i = 0 ; i< linhasEmComum.length; i++){
-            				var li = $("<li>");
-            				 li.html("<a href='#'>"+linhasEmComum[i].codigo + " " + linhasEmComum[i].nome + "</a>");            				 
-            				 li.appendTo($("ul#items"));		
-            			}
-            				            			            			            
-                		$("#resposta").append("</br>");            			            		
-            			
-            			//$("#resposta").append("<table id='linhasEncontradas' class='table table-hover table-condensed' style='display: none;'><thead><tr><th>#</th><th>Linha</th></tr></thead><tbody></tbody></table>");
-                		           
-                		/*$('ul#items').easyPaginate({							
-                				elementsPerPage: '5',
-                				effect: 'climb'
-                			});*/
-
-
-                		$('ul#items').paginate({
-                				step:10                
-               			});
-
-                		$("#linhasEncontradas").show();     			
-            			//createDynamicTable($('#linhasEncontradas'),linhasEmComum);
+            		if(linhasEmComum.length > 0){                		    
+            			buildResultsBlock($("#resposta"), linhasEmComum); 			
             		}else{
             			alert("0 rotas encontradas. Deseja procurar por baldiação?");
             		}     		
@@ -206,73 +81,23 @@ function doSearch(from, to, maxDistance){
             }
     });
     $("#resposta").show();
-    $("#resposta").html("<img src='img/loading.gif' style='vertical-align: middle;'/> Buscando..."); 
-	
-    //var JSONstring = $.toJSON(json);
-    //console.log(JSONstring);
+    $("#resposta").html("<img src='img/loading.gif' style='vertical-align: middle;'/> Buscando..."); 	
 }
 
-function createDynamicTable(tbody, linhas) {
-	if (tbody == null || tbody.length < 1) return;
-	for (var r = 0; r < linhas.length; r++) {
-		var trow = $("<tr>");
-		 $("<td>")
-		 .text(linhas[r].codigo)
-		  .appendTo(trow);		
-		 $("<td>")
-		 .text(linhas[r].nome)
-		  .appendTo(trow);		
-		 trow.appendTo(tbody);
-	}	
+function buildResultsBlock(element,content){
+	element.html("<div class='header'>Linhas<button type='button' class='close' onclick='closeResultsBlock();'>&times;</button></div>");            			            			
+	element.append("<ul id='items'>");            			            			            			
+	for(var i = 0 ; i< linhasEmComum.length; i++){
+		var li = $("<li>");
+		 li.html("<a href='#'>"+linhasEmComum[i].codigo + " " + linhasEmComum[i].nome + "</a>");            				 
+		 li.appendTo($("ul#items"));		
+	}            				            			            			            
+	element.append("</br>");            			            		            			
+	$('ul#items').paginate({
+			step:10                
+	});    
 }
 
 function closeResultsBlock() {
 	$("#resposta").fadeOut(300);	
 }; 
-
-
-//AUX FUNCTIONS and CONSTANTS
-var EARTHRADIUS = 6371;
-function cMax(variable, soma){
-	return variable + rad2deg(soma/EARTHRADIUS);
-}
-function cMin(variable, subtracao){
-	return variable - rad2deg(subtracao/EARTHRADIUS);
-}
-
-function rad2deg (angle) {
-  return angle * 57.29577951308232; // angle / Math.PI * 180
-}
-
-function deg2rad(degrees){
-   return (2 * Math.PI * degrees)/360;    
-}
-
-//USEFUL
-//http://www.movable-type.co.uk/scripts/latlong.html  <-- Calculate distance, bearing and more between Latitude/Longitude points
-//http://janmatuschek.de/LatitudeLongitudeBoundingCoordinates
-
-
-//great circle
-function distance(lat1,lon1,lat2,lon2) {
-    var R = 6371; // km (change this constant to get miles)
-    var dLat = (lat2-lat1) * Math.PI / 180;
-    var dLon = (lon2-lon1) * Math.PI / 180;
-    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180 ) * Math.cos(lat2 * Math.PI / 180 ) *
-    Math.sin(dLon/2) * Math.sin(dLon/2);
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    var d = R * c;
-    if (d>1) return Math.round(d)+"km";
-    else if (d<=1) return Math.round(d*1000)+"m";
-    return d;
-}
-
-function distancePitagoras(lat1,lon1,lat2,lon2){
-	var dLat = (lat2-lat1);
-	var dLon = (lon2-lon1);
-	var c = Math.sqrt((dLat*dLat)+(dLon*dLon));
-	var R = 6371;
-	var d = (c*Math.PI*R)/180;
-	return d;
-}

@@ -24,12 +24,6 @@ public class PontoService extends EJBImpl<Ponto, Integer> {
 	@SuppressWarnings("unchecked")
 	public List<Linha> findLinhasNearPonto(Float latitude, Float longitude) {
 
-		/*select distinct(b.ID_LINHAS)
-		from 	pontos a, linhas_pontos b
-		where (sqrt(((a.lat-(-30.0823102))*(a.lat-(-30.0823102)))+
-		((a.lng-(-51.211220000000026))*(a.lng-(-51.211220000000026))))*PI()*6371)/180  < 0.5
-		and b.ID_PONTOS = a.ID*/
-		
 		//TypedQuery<Linha> query = entityManager.createQuery(				
 		Query query = entityManager.createQuery(				
 				"SELECT distinct p.linhas " +
@@ -45,36 +39,22 @@ public class PontoService extends EJBImpl<Ponto, Integer> {
 	}
 
 
-	public List<Object[]> findParadasQueSeCruzam(List<Integer> origem,
-			List<Integer> destino) {
+	public List<Object[]> findParadasQueSeCruzam(List<Float> origem,
+			List<Float> destino) {
 		
-		/*SELECT AA1.ID_LINHAS, BB1.ID_LINHAS
-		FROM (
-			SELECT AB1. *
-			FROM linhas_pontos AB1
-			WHERE AB1.ID_LINHAS IN ( 1, 2 )
-		)AA1, (
-			SELECT AB2. *
-			FROM linhas_pontos AB2
-			WHERE AB2.ID_LINHAS IN ( 3, 5, 6, 7 )
-		)BB1
-		WHERE AA1.ID_PONTOS = BB1.ID_PONTOS*/
 		Query q = entityManager.createNativeQuery(			
-				"SELECT AA1.ID_LINHAS, BB1.ID_LINHAS " +
-				" FROM ( SELECT AB1.*" +
-				" 		 FROM linhas_pontos AB1 " +
-				"		 WHERE AB1.ID_LINHAS IN (:origem) " +
-				")AA1, (" +
-				" 		SELECT AB2.* FROM linhas_pontos AB2 " +
-				" 		WHERE AB2.ID_LINHAS IN ( :destino ) " +
-				")BB1" +
-				" WHERE AA1.ID_PONTOS = BB1.ID_PONTOS " +
-				" GROUP BY AA1.ID_LINHAS, BB1.ID_LINHAS");
+				"SELECT distinct a.id_linhas AID, b.id_linhas BID " +
+				"from linhas_pontos a, linhas_pontos b " +
+				"where a.id_linhas in (:origem) " +
+				"and b.id_linhas in (:destino) " +
+				"and a.id_pontos = b.id_pontos " +
+				"GROUP BY AID, BID ");		
 		
 		System.out.println("origem"+origem);
 		System.out.println("destino"+destino);
 		q.setParameter("origem", origem);
 		q.setParameter("destino", destino);	
+		@SuppressWarnings("unchecked")
 		List<Object[]> result = q.getResultList();
 		for (Object[] l : result){
 			System.out.println("\t" + l[0] + "\t" + l[1]);

@@ -43,16 +43,28 @@
     background-image: url("../img/glyphicons-halflings-red.png");
 }
 
+#paginador{
+	bottom: 0px;
+	position: absolute;
+	padding: 0px 0px 0px 0px;  
+	margin: 0px;
+	width: 350px;
+}
 
 
 #resposta {
+	font-size: 11px;
     left: 100px;
     margin: 0;
     position: absolute;
     top: 80px;
-    width: 260px;
+    width: 350px;
     opacity: 0.7;
-    margin: 0 2.5% 2.5%;
-    padding: 10px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    padding-bottom: 25px;
+    padding-right: 0px;
+    padding-left: 0px; 
     max-height: 400px;
 }

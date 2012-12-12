@@ -93,11 +93,11 @@
 			obj = this;
 			if(count>step){							
 				if((count/step) > pages) pages++;
-				var divPagination = $("<div class='pagination pagination-mini'></div>").insertAfter(obj);				
+				var divPagination = $("<div id='paginador' class='pagination pagination-small pagination-centered'></div>").insertAfter(obj);				
 				var ol = $('<ul id="'+ options.controls +'"></ol>');
 				ol.appendTo($("div.pagination"));
 				
-				$('<li id="primeiro"><a>a</a></li>').appendTo(ol).
+				$('<li id="primeiro"><a><div class="icon-step-backward"/></a></li>').appendTo(ol).
 						click(function(){
 							if(page != 1){								
 								clicked = true;
@@ -106,7 +106,7 @@
 							}
 						});
 				
-				$('<li id="anterior"><a>b</a></li>')
+				$('<li id="anterior"><a><div class="icon-backward"/></a></li>')
 						.appendTo(ol)
 						.click(function(){
 							if(page != 1){
@@ -125,7 +125,7 @@
 							show();
 						});										
 				}						
-				$('<li id="proximo"><a>c</a></li>')
+				$('<li id="proximo"><a><div class="icon-forward"/></a></li>')
 						.appendTo(ol)
 						.click(function(){
 							if(page != pages){
@@ -134,7 +134,7 @@
 								show();
 							}
 						});
-				$('<li id="ultimo"><a>d</a></li>')
+				$('<li id="ultimo"><a><div class="icon-step-forward"/></a></li>')
 						.appendTo(ol)
 						.click(function(){
 							if(page != pages){

@@ -58,10 +58,10 @@ public class PontoService extends EJBImpl<Ponto, Integer> {
 		q.setParameter("destino", destino);	
 		@SuppressWarnings("unchecked")
 		List<Object[]> result = q.getResultList();
-		/*for (Object[] l : result){
+		for (Object[] l : result){
 			System.out.println("\t" + l[0] + "\t" + l[1]+"\t" + l[2] + "\t" + l[3]+"\t" + l[4] + "\t" + l[5]);
 			
-		}*/
+		}
 		return result;
 	}
 }

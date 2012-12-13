@@ -145,6 +145,7 @@ public class JsonBuilder {
 							json.add("id", context.serialize(linha.getId()));
 							json.add("codigo", context.serialize(linha.getCodigo()));
 							json.add("nome", context.serialize(linha.getNome()));
+														
 							return json;
 						}
 					});			

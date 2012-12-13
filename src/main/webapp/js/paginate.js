@@ -13,8 +13,7 @@
 	$.fn.paginate = function(options){
 		var defaults = {
 			step: 10			
-		};
-		
+		};		
 		var options = $.extend(defaults, options); 
 		var lower;
 		var upper;		
@@ -35,7 +34,7 @@
 		};
 		
 		function show(){			
-			console.log("page novo valor: "+page+" oldPage: " + oldPage);
+			//console.log("page novo valor: "+page+" oldPage: " + oldPage);
 			lower = ((oldPage-1) * step);
 			upper = lower+step;
 			//console.log("limpando de "+lower+" ate " + upper);
@@ -55,8 +54,8 @@
 			$('li[data-index="'+oldPage+'"]').removeClass('disabled');						
 			$('li[data-index="'+page+'"]').addClass('disabled');
 			
-			console.log("clicked"+clicked);
-			console.log("pages"+pages);
+			//console.log("clicked"+clicked);
+			//console.log("pages"+pages);
 			if(clicked && pages>5){
 				rebuildPaginator(page);
 			}
@@ -72,7 +71,7 @@
 				auxPageMax = 5;
 			}else if( (parseInt(x) + 2) > pages){
 				auxPageMax = pages;
-				auxPageMin = pages - 5;
+				auxPageMin = pages - 4;
 			}else{
 				auxPageMin = parseInt(x) - 2;
 				auxPageMax = parseInt(x) + 2;

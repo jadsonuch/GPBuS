@@ -43,7 +43,7 @@ public class PontoService extends EJBImpl<Ponto, Integer> {
 			List<Float> destino) {
 		
 		Query q = entityManager.createNativeQuery(			
-				"SELECT distinct a.id_linhas AID, c.nome as cnome, b.id_linhas BID, d.nome as dnome " +
+				"SELECT  a.id_linhas AID, c.codigo ccodigo, c.nome cnome, b.id_linhas BID, d.codigo dcodigo, d.nome dnome " +
 				"from linhas_pontos a, linhas_pontos b, linhas c, linhas d " +
 				"where a.id_linhas in (:origem) " +
 				"and b.id_linhas in (:destino) " +
@@ -52,16 +52,16 @@ public class PontoService extends EJBImpl<Ponto, Integer> {
 				"and d.id = b.id_linhas " +
 				"GROUP BY AID, BID ");		
 		
-		System.out.println("origem"+origem);
+		System.out.println("origem"+origem);	
 		System.out.println("destino"+destino);
 		q.setParameter("origem", origem);
 		q.setParameter("destino", destino);	
 		@SuppressWarnings("unchecked")
 		List<Object[]> result = q.getResultList();
-		for (Object[] l : result){
-			System.out.println("\t" + l[0] + "\t" + l[1]);
-			System.out.println("\t" + l[1] + "\t" + l[2]);
-		}
+		/*for (Object[] l : result){
+			System.out.println("\t" + l[0] + "\t" + l[1]+"\t" + l[2] + "\t" + l[3]+"\t" + l[4] + "\t" + l[5]);
+			
+		}*/
 		return result;
 	}
 }

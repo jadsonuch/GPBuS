@@ -38,19 +38,20 @@ public class RequestControllerDual extends HttpServlet {
 		List<Object[]> linhasComPontosEmComum = pontoService.findParadasQueSeCruzam(data.getSrc(),data.getDst());				
 
 		List<DataMultipleResponse> destinos = new ArrayList<DataMultipleResponse>();
-		for (Object[] l : linhasComPontosEmComum){
-			
-			System.out.println("\t" + l[0] + "\t" + l[1]);
-			System.out.println("\t" + l[1] + "\t" + l[2]);
+		for (Object[] l : linhasComPontosEmComum){		
+				Linha auxSrc = new Linha((Integer)l[0],(String)l[1],(String)l[2]);					
+				Linha auxDst = new Linha((Integer)l[3],(String)l[4],(String)l[5]);
+				DataMultipleResponse dmr = new DataMultipleResponse(auxSrc, auxDst);
+				destinos.add(dmr);
 		}
-		
-		
-		
+		System.out.println("size -> " + destinos.size());
+		//avenida sertorio 6969 porto alegre
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(String.format(
 				"{\"linhas\":%s}",
-				JsonBuilder.toJson(linhasComPontosEmComum)));	
+				JsonBuilder.toJson(destinos)));			
+		
 	}
 	
 	

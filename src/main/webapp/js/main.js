@@ -68,14 +68,10 @@ function doSearch(from, to, maxDistance){
             success : function(data, textStatus) {            	
             	if (isSearching) {
             		isSearching = false;
-            		linhasEmComum = data.linhas;
-            		linhasTeste = data;
-            		console.log("linhasEmComum.length"+linhasEmComum.length);
+            		linhasEmComum = data.linhas;            		
             		if(linhasEmComum.length > 0){                		    
-            			console.log("entrou no > 0");
-            			buildResultsBlock($("#resposta"), linhasEmComum); 			
+            			buildResultsBlock($("#resposta"), linhasEmComum, 1); 			
             		}else{
-            			console.log("entrou no < 0");
             			$("#resposta").addClass("alert-block").removeClass("alert-info");
             			$("#resposta").html("<p>Nenhuma conex&atilde;o direta encontrada. " +
             								"Deseja tentar procurar por uma baldia&ccedil;&atilde;o?</p>" +
@@ -143,8 +139,10 @@ function doSearchDual(origem,destino,maxDistance){
         	if (isSearching) {
         		isSearching = false;
         		testDual = data;
-        		linhasTeste = data;
-        		console.log("DUAL OK"); 		
+        		linhasTeste = data.linhas;	
+        		if(linhasTeste.length > 0){                		    
+        			buildResultsBlock($("#resposta"), linhasTeste, 2); 			
+        		}
         	}                                 
         },
         error : function(xhr, textStatus, errorThrown) {
@@ -157,14 +155,22 @@ function doSearchDual(origem,destino,maxDistance){
 }
 
 
-function buildResultsBlock(element,content){
-	element.html("<div class='header'>Linhas<button type='button' class='close' onclick='closeResultsBlock();'>&times;</button></div>");            			            			
+function buildResultsBlock(element,content,mode){
+	element.html("<div class='header'>Linhas<button type='button' class='close' onclick='closeResultsBlock();'>&times;</button></div>");	
 	element.append("<ul id='items'>");            			            			            			
-	for(var i = 0 ; i< content.length; i++){
-		var li = $("<li>");
-		 li.html("<a href='#'>"+content[i].codigo + " " + content[i].nome + "</a>");            				 
-		 li.appendTo($("ul#items"));		
-	}            				            			            			            
+	if(mode == 1){
+		for(var i = 0 ; i< content.length; i++){
+			var li = $("<li>");
+			 li.html("<a href='#'>"+content[i].codigo + " " + content[i].nome + "</a>");            				 
+			 li.appendTo($("ul#items"));		
+		}            				            			            			            		
+	}else{
+		for(var i = 0 ; i< content.length; i++){
+			var li = $("<li>");
+			 li.html("<a href='#'>"+content[i].codigo + " " + content[i].dcodigo + "</a>");            				 
+			 li.appendTo($("ul#items"));		
+		}    
+	}
 	element.append("</br>");            			            		            			
 	if(content.length > 10){
 		$('ul#items').paginate({

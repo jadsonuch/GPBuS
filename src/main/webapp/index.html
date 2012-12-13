@@ -83,7 +83,9 @@
                 var mapOptions = {
                   center: new google.maps.LatLng(-30.08, -51.22),
                   zoom: 13,
-                  mapTypeId: google.maps.MapTypeId.ROADMAP
+                  mapTypeId: google.maps.MapTypeId.ROADMAP,
+                  mapTypeControl: false,
+                  styles : [ {stylers: [ {hue: "#00ccff"}, {lightness: 29}, {gamma: 1.55}, {visibility: "on"} ]} ]
                 };
                 map = new google.maps.Map(document.getElementById("map_canvas"),
                     mapOptions);

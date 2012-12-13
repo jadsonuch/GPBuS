@@ -1,19 +1,16 @@
 package br.com.gpbus.util;
 
-import java.util.List;
-
 import br.com.gpbus.model.Linha;
 
 public class DataMultipleResponse {
 	
 	private Linha origem;
-	private List<Linha> destination;
+	private Linha destination;
 	
-	public DataMultipleResponse(){
-		
+	public DataMultipleResponse(){		
 	}
 		
-	public DataMultipleResponse(Linha origem, List<Linha> destination) {
+	public DataMultipleResponse(Linha origem, Linha destination) {
 		this.origem = origem;
 		this.destination = destination;
 	}
@@ -24,13 +21,15 @@ public class DataMultipleResponse {
 	public void setOrigem(Linha origem) {
 		this.origem = origem;
 	}
-	public List<Linha> getDestination() {
+	
+	public Linha getDestination() {
 		return destination;
 	}
-	public void setDestination(List<Linha> destination) {
+
+	public void setDestination(Linha destination) {
 		this.destination = destination;
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.format(

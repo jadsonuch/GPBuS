@@ -147,7 +147,22 @@ public class JsonBuilder {
 							json.add("nome", context.serialize(linha.getNome()));
 							return json;
 						}
-					});				
+					});			
+			gsonBuilder.registerTypeAdapter(DataMultipleResponse.class,
+					new JsonSerializer<DataMultipleResponse>() {
+						@Override
+						public JsonElement serialize(DataMultipleResponse dmr,
+								Type type, JsonSerializationContext context) {
+							JsonObject json = new JsonObject();
+							json.add("id", context.serialize(dmr.getOrigem().getId()));
+							json.add("codigo", context.serialize(dmr.getOrigem().getCodigo()));
+							json.add("nome", context.serialize(dmr.getOrigem().getNome()));
+							json.add("did", context.serialize(dmr.getDestination().getId()));
+							json.add("dcodigo", context.serialize(dmr.getDestination().getCodigo()));
+							json.add("dnome", context.serialize(dmr.getDestination().getNome()));							
+							return json;
+						}
+					});			
 			gsonBuilder.registerTypeAdapter(Date.class,
 					new JsonSerializer<Date>() {
 						@Override

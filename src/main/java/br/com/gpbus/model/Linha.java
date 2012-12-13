@@ -36,6 +36,13 @@ public class Linha implements Serializable {
 
 	public Linha() {
 	}
+	
+	public Linha(int id, String codigo, String nome) {
+		super();
+		this.id = id;
+		this.codigo = codigo;
+		this.nome = nome;
+	}
 
 	public int getId() {
 		return this.id;

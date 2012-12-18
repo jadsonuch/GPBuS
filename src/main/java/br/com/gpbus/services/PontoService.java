@@ -44,7 +44,7 @@ public class PontoService extends EJBImpl<Ponto, Integer> {
 		
 		Query q = entityManager.createNativeQuery(			
 				"SELECT  a.id_linhas AID, c.codigo ccodigo, c.nome cnome, b.id_linhas BID, d.codigo dcodigo, d.nome dnome " +
-				"from linhas_pontos a, linhas_pontos b, linhas c, linhas d " +
+				"from linha_ponto a, linha_ponto b, linha c, linha d " +
 				"where a.id_linhas in (:origem) " +
 				"and b.id_linhas in (:destino) " +
 				"and a.id_pontos = b.id_pontos " +

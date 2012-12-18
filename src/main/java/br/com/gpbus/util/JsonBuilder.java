@@ -8,6 +8,7 @@ import java.util.Date;
 
 import br.com.gpbus.model.Linha;
 import br.com.gpbus.model.Ponto;
+import br.com.gpbus.model.PontoMapa;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -135,7 +136,19 @@ public class JsonBuilder {
 							json.add("lng", context.serialize(ponto.getLng()));
 							return json;
 						}
-					});			
+					});	
+			gsonBuilder.registerTypeAdapter(PontoMapa.class,
+					new JsonSerializer<PontoMapa>() {
+						@Override
+						public JsonElement serialize(PontoMapa ponto,
+								Type type, JsonSerializationContext context) {
+							JsonObject json = new JsonObject();
+							json.add("id", context.serialize(ponto.getId()));
+							json.add("lat", context.serialize(ponto.getLat()));
+							json.add("lng", context.serialize(ponto.getLng()));
+							return json;
+						}
+					});	
 			gsonBuilder.registerTypeAdapter(Linha.class,
 					new JsonSerializer<Linha>() {
 						@Override

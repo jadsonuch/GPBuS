@@ -44,7 +44,7 @@ public class LinhaService extends EJBImpl<Linha, Integer> {
 					"WHERE l.id = :idLinha ",Linha.class);		
 			query.setParameter("idLinha", idLinha);		
 			Linha l = query.getSingleResult();			
-			Hibernate.initialize(l.getPontos());
+			Hibernate.initialize(l.getPontoMapas());
 			return l;
 		}
 		
@@ -58,7 +58,7 @@ public class LinhaService extends EJBImpl<Linha, Integer> {
 			query.setParameter("destinos", destinos);
 			List<Linha> result = query.getResultList();
 			for(Linha l : result){
-				Hibernate.initialize(l.getPontos());
+				Hibernate.initialize(l.getPontoMapas());
 			}
 			System.out.println(result.size());
 			return result;

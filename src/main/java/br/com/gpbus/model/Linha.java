@@ -6,11 +6,10 @@ import java.util.List;
 
 
 /**
- * The persistent class for the linhas database table.
+ * The persistent class for the linha database table.
  * 
  */
 @Entity
-@Table(name="linhas")
 public class Linha implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -24,7 +23,7 @@ public class Linha implements Serializable {
 	//bi-directional many-to-many association to Ponto
 	@ManyToMany
 	@JoinTable(
-		name="linhas_pontos"
+		name="linha_ponto"
 		, joinColumns={
 			@JoinColumn(name="ID_LINHAS")
 			}
@@ -33,6 +32,10 @@ public class Linha implements Serializable {
 			}
 		)
 	private List<Ponto> pontos;
+
+	//bi-directional many-to-one association to PontoMapa
+	@OneToMany(mappedBy="linha")
+	private List<PontoMapa> pontoMapas;
 
 	public Linha() {
 	}
@@ -43,6 +46,7 @@ public class Linha implements Serializable {
 		this.codigo = codigo;
 		this.nome = nome;
 	}
+
 
 	public int getId() {
 		return this.id;
@@ -75,6 +79,14 @@ public class Linha implements Serializable {
 	public void setPontos(List<Ponto> pontos) {
 		this.pontos = pontos;
 	}
+
+	public List<PontoMapa> getPontoMapas() {
+		return this.pontoMapas;
+	}
+
+	public void setPontoMapas(List<PontoMapa> pontoMapas) {
+		this.pontoMapas = pontoMapas;
+	}
 	
 	@Override
 	public String toString() {
@@ -102,5 +114,7 @@ public class Linha implements Serializable {
 			return false;
 		}
 	}
+
+
 
 }

@@ -69,7 +69,7 @@ public class RequestLinha extends HttpServlet{ /**
 
 	public String generateJson(Linha l){
 		String doJson = JsonBuilder.toJson(l);
-		doJson = doJson.replace("}", ",\"pontos\": " + JsonBuilder.toJson(l.getPontos())+"}");
+		doJson = doJson.replace("}", ",\"pontos\": " + JsonBuilder.toJson(l.getPontoMapas())+"}");
 		return doJson;		
 	}
 

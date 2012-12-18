@@ -6,11 +6,10 @@ import java.util.List;
 
 
 /**
- * The persistent class for the pontos database table.
+ * The persistent class for the ponto database table.
  * 
  */
 @Entity
-@Table(name="pontos")
 public class Ponto implements Serializable {
 	private static final long serialVersionUID = 1L;
 

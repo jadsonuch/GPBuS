@@ -4,7 +4,7 @@ var geocoder;
 var COLORS = ["#4bb2c5","#eaa228","#c5b47f","#579575","#839557","#958c12","#953579","#4b5de4","#d8b83f", "#ff5800","#0085cc","#c747a3","#cddf54","#fbd178","#26b4e3","#bd70c7"];
 
 $("#btnBusca").click(function(){            
-	console.log("clicou");
+	//console.log("clicou");
 	var overflow = $(".nav-collapse.collapse").css('overflow');
 	if( overflow === 'hidden'){
 		$(".collapse").collapse('toggle');
@@ -109,7 +109,7 @@ function doSearch(from, to, maxDistance){
             				.appendTo($("#btnToolbar"))
             				.click(function(){
             					doSearchDual(data.linhasOrigem,data.linhasDestino,maxDistance);
-            					console.log("Clicou Para continuar a busca");
+            					//console.log("Clicou Para continuar a busca");
             				});
             			$("<button id='btnCancelBaldiacao' class='btn btn-danger'>N&atilde;o</button>")
             			    .appendTo($("#btnToolbar"))
@@ -181,6 +181,15 @@ function doSearchDual(origem,destino,maxDistance){
     
 }
 
+//animacao do plot
+function plot(way, data, color, index) {
+	if (data.length < index) 
+		return;
+	way.push(new google.maps.LatLng(data[index].lat, data[index].lng)); 			
+	index++;
+	setTimeout(function() {plot(way,data, color, index);},4);
+}
+
 var auxTestLinha;
 var polyLines = new Array();
 function buildResultsBlock(element,content,mode){
@@ -220,9 +229,8 @@ function buildResultsBlock(element,content,mode){
 			        	console.log("Pegou LINHA");	
 			        	
 			        	 var c = COLORS[0];
-			        	 //var c = COLORS[seriesIndex % COLORS.length];
-			        	 
-			        	 var lineOptions = {
+		        	 
+			        	var lineOptions = {
 			        			 strokeColor: c,
 			        			 strokeOpacity: 0.5,
 			        			 strokeWeight: 5
@@ -233,9 +241,11 @@ function buildResultsBlock(element,content,mode){
 	        			 polyLines.push(pl);
 			        	 var path = pl.getPath();
 			        	 
-			        	 for (var i = 0; i < aux.length; i++) {
-			        		 path.push(new google.maps.LatLng(aux[i].lat, aux[i].lng));
-			        	 }        	
+			        	 plot(path,aux,c,0);
+			        	 /*for (var i = 0; i < aux.length; i++) {
+			        		path.push(new google.maps.LatLng(aux[i].lat, aux[i].lng));	 
+			        					        		 
+			        	 }  */      	
 			        	
 			        },
 			        error : function(xhr, textStatus, errorThrown) {
@@ -249,16 +259,16 @@ function buildResultsBlock(element,content,mode){
 		$.each(content, function(index, element) {
 			var json = new Object;
 		    json.src = [content[index].id];
-		    console.log("element.id"+element.id);
+		    //console.log("element.id"+element.id);
 	        json.dst = [content[index].did];
-	        console.log("element.did"+element.did);
+	        //console.log("element.did"+element.did);
 	        json.maxDistance = null;
 	        var JSONstring = JSON.stringify(json);	  
-	        console.log("mostrando resultado"+JSONstring);
+	        //console.log("mostrando resultado"+JSONstring);
 			$("<li><a href='#'>"+content[index].codigo + " " + content[index].dcodigo + "</a></li>")
 		    .appendTo($("ul#items"))
 			.click(function(){
-				console.log("ESCOLHIDO"+JSONstring);	  
+				//console.log("ESCOLHIDO"+JSONstring);	  
 				$.ajax({
 			        url: "find",
 			        type: "POST",
@@ -268,7 +278,7 @@ function buildResultsBlock(element,content,mode){
 			        dataType: "json",
 			        success : function(data, textStatus) {            	
 			        	auxTestLinha = data;
-			        	console.log("Pegou LINHA");		
+			        	//console.log("Pegou LINHA");		
 			        	
 			        	for (var i = 0; i < polyLines.length; i++) {
 			        		polyLines[i].setMap(null);
@@ -298,9 +308,12 @@ function buildResultsBlock(element,content,mode){
 		        			 polyLines.push(pl);
 				        	 var path = pl.getPath();
 				        	 
+				        	 plot(path,aux,c,0);
+				        	 
+				        	 /*
 				        	 for (var i = 0; i < aux.length; i++) {
-				        		 path.push(new google.maps.LatLng(aux[i].lat, aux[i].lng));
-				        	 }     			        
+				        		 path.push(new google.maps.LatLng(aux[i].lat, aux[i].lng));			        			
+				        	 }*/     			        
 			        	}
 			        },
 			        error : function(xhr, textStatus, errorThrown) {

@@ -5,6 +5,9 @@ var COLORS = ["#4bb2c5","#eaa228","#c5b47f","#579575","#839557","#958c12","#9535
 
 $("#btnBusca").click(function(){            
 	//console.log("clicou");
+	//pegando valor do radio
+	console.log($('.btn-group button.active').val());
+	
 	var overflow = $(".nav-collapse.collapse").css('overflow');
 	if( overflow === 'hidden'){
 		$(".collapse").collapse('toggle');
@@ -183,8 +186,9 @@ function doSearchDual(origem,destino,maxDistance){
 
 //animacao do plot
 function plot(way, data, color, index) {
-	if (data.length < index) 
+	if (data.length <= index)	
 		return;
+	
 	way.push(new google.maps.LatLng(data[index].lat, data[index].lng)); 			
 	index++;
 	setTimeout(function() {plot(way,data, color, index);},4);
@@ -348,3 +352,4 @@ var searchMarker = {
 function closeResultsBlock() {
 	$("#resposta").fadeOut(300);	
 }; 
+

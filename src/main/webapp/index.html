@@ -44,9 +44,19 @@
 	                                <li><a href="#about">About</a></li>
 	                                <li><a href="#contact">Contact</a></li>                            
 	                            </ul>
+	                            
+
+	                            
 	                            <form class="navbar-form pull-right">
+	                            
+	                         		<div id="btn-escolha" class="btn-group" data-toggle="buttons-radio">
+    									<button id="btn-onibus" type="button" class="btn" class-toggle="btn-primary" value="onibus">Onibus</button>
+    									<button id="btn-lotacao" type="button" class="btn" class-toggle="btn-primary" value="lotacao" >Lotação</button>
+    									<button id="btn-taxi" type="button" class="btn" class-toggle="btn-primary" value="taxi">Táxi</button>
+									</div>
+	                            
 	                                <input class="span3" type="text" id="origem" placeholder="Avenida Ipiranga 1600, Porto Alegre" value="clemenciano barnasque 160, porto alegre">
-	                                <input class="span3" type="text" id="destino" placeholder="Avenida Salgado Filho, Porto Alegre" value="teresopolis 3000, porto alegre">
+	                                <input class="span3" type="text" id="destino" placeholder="Avenida Salgado Filho, Porto Alegre" value="carlos gomes 111, porto alegre">
 	                                <button id="btnBusca" type="button" class="btn">Busca</button>
 	                            </form>
 	                        </div><!--/.nav-collapse -->
@@ -74,6 +84,8 @@
         <script src="js/plugins.js"></script>
         <script type="text/javascript" src="js/main.js"></script>		
 		<script type="text/javascript" src="js/paginate.js"></script>
+		<script type="text/javascript" src="js/customization.js"></script>
+		<script type="text/javascript" src="js/junk.js"></script>
         <!-- Google Maps API -->
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDnTN_GB0uLIsOpMZr0MVZcVwtVSyD4NNg&amp;sensor=false&amp;libraries=geometry"></script>
 
@@ -91,6 +103,7 @@
                     mapOptions);
               //}
                geocoder = new google.maps.Geocoder();
+               $("#btn-onibus").definirAtivo();
             });
 
           $(window).resize(function () {

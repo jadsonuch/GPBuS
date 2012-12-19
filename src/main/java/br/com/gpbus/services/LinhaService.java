@@ -1,18 +1,15 @@
 package br.com.gpbus.services;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.hibernate.Hibernate;
 
 import br.com.gpbus.model.Linha;
-import br.com.gpbus.model.Ponto;
 
 @Stateless
 public class LinhaService extends EJBImpl<Linha, Integer> {
